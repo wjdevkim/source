@@ -406,6 +406,20 @@ ramips_board_detect() {
 	*"RB750Gr3")
 		name="rb750gr3"
 		;;
+
+	*"RCU890L")
+		name="rcu890l"
+		;;
+	*"RCU890LHV2")
+		name="rcu890lhv2"
+		;;
+	*"RCU890LHV3")
+		name="rcu890lhv3"
+		;;
+	*"RCU890LS")
+		name="rcu890ls"
+		;;
+
 	*"RE6500")
 		name="re6500"
 		;;

@@ -292,6 +292,16 @@ re6500)
 	ucidef_set_led_default "power" "power" "$board:white:power" "1"
 	ucidef_set_led_default "wifi" "wifi" "$board:orange:wifi" "1"
 	;;
+
+rcu890l|\
+rcu890lhv2|\
+rcu890lhv3|\
+rcu890ls)
+	ucidef_set_led_netdev "lan" "LAN" "rcu890:grange:lan" "br-lan" "tx rx"
+	ucidef_set_led_netdev "wan" "WAN" "rcu890:green:wan" "usb0" "tx rx"
+	ucidef_set_led_default "status" "STATUS" "rcu890:green:status" "heartbeat"
+	;;
+
 rp-n53)
 	ucidef_set_led_netdev "eth" "Network" "$board:white:back" "eth0"
 	set_wifi_led "$board:blue:wifi"

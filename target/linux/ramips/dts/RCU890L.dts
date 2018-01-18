@@ -1,0 +1,198 @@
+/dts-v1/;
+
+/include/ "rt5350.dtsi"
+
+/ {
+	compatible = "RCU890L", "ralink,rt5350-soc";
+	model = "RCU890L";
+	
+	chosen {
+		bootargs = "console=ttyS0,115200";
+	};
+
+	palmbus@10000000 {	
+
+		uart@500 {    
+            		status = "okay";
+	        };
+		
+		gpio0: gpio@600 {
+			status = "okay";
+		};
+		
+		gpio1: gpio@660 {
+			status = "okay";
+		};
+
+		i2c@900 {
+			status = "okay";
+		};
+
+		spi@b00 {
+			status = "okay";
+
+			m25p80@0 {
+				#address-cells = <1>;
+				#size-cells = <1>;
+				compatible = "s25fl064k";
+				reg = <0>;
+				linux,modalias = "m25p80", "s25fl064k";
+				spi-max-frequency = <10000000>;
+
+				partition@0 {
+					label = "uboot";
+					reg = <0x0 0x30000>;
+					/*read-only;*/
+				};
+
+				partition@30000 {
+					label = "uboot-env";
+					reg = <0x30000 0x10000>;
+					/*read-only;*/
+				};
+
+				factory: partition@40000 {
+					label = "factory";
+					reg = <0x40000 0x10000>;
+					read-only;
+				};
+
+				partition@50000 {
+					label = "firmware";
+					reg = <0x50000 0xfb0000>;
+				};
+			};
+
+			spidev@1 {
+				compatible = "linux,spidev";
+				spi-max-frequency = <10000000>;
+				reg = <1>;
+			};
+		};		
+	};
+
+	pinctrl {
+		state_default: pinctrl0 {
+			gpio {
+				ralink,group = "jtag","led";
+				ralink,function = "gpio";
+			};							
+		};
+	};
+
+	ethernet@10100000 {
+		mtd-mac-address = <&factory 0x4>;
+	};
+
+	esw@10110000 {
+		ralink,portmap = <0x17>;
+	};
+
+	wmac@10180000 {
+		ralink,mtd-eeprom = <&factory 0>;
+	};
+
+	ehci@101c0000 {
+		status = "okay";
+	};
+
+	ohci@101c1000 {
+		status = "okay";
+	};	
+
+	gpio-export {
+		compatible = "gpio-export";
+		#size-cells = <0>;
+
+		/* GPIO0 => GPIO_LTE_RST */
+		gpio0 {
+			gpio-export,name = "gpio0";
+			gpio-export,direction_may_change = <1>;
+			gpios = <&gpio0 0 0>;
+		};
+
+		/* JTAG_TDO => RCU_EXT_PWR_DET */
+		gpio17 {
+			/* JTAG_TDO */
+			gpio-export,name = "gpio17";
+			gpio-export,direction_may_change = <1>;
+			gpios = <&gpio0 17 0>;
+		};
+
+		/* JTAG_TDI => RCU_GPIO_0 */
+		gpio18 {
+			/* JTAG_TDI */
+			gpio-export,name = "gpio18";
+			gpio-export,direction_may_change = <1>;
+			gpios = <&gpio0 18 0>;
+		};
+
+		/* JTAG_TMS => RCU_GPIO_1 */
+		gpio19 {
+			/* JTAG_TMS */
+			gpio-export,name = "gpio19";
+			gpio-export,direction_may_change = <1>;
+			gpios = <&gpio0 19 0>;
+		};
+
+		/* JTAG_TCLK => RCU_GPIO_2 */
+		gpio20 {
+			/* JTAG_TCLK */
+			gpio-export,name = "gpio20";
+			gpio-export,direction_may_change = <1>;
+			gpios = <&gpio0 20 0>;
+		};
+
+		/* JTAG_TRST_N => RCU_CL */
+		gpio21 {
+			/* JTAG_TRST_N */
+			gpio-export,name = "gpio21";
+			gpio-export,direction_may_change = <1>;
+			gpios = <&gpio0 21 0>;
+		};		
+
+		/* EPHY_LED1_N => RCU_LED_GREEN_1_SERIAL_RX_TX */
+		gpio23 {
+			/* EPHY_LED1_N */
+			gpio-export,name = "gpio23";
+			gpio-export,direction_may_change = <1>;
+			gpios = <&gpio1 1 0>;
+		};		
+		
+	};
+	
+	gpio-leds {
+		compatible = "gpio-leds";
+		
+		lan0 {
+			/* EPHY_LED0_N */
+			label = "rcu890:green:wan";
+			gpios = <&gpio1 0 0>;
+		};
+				
+		status {
+			/* EPHY_LED2_N */
+			label = "rcu890:green:status";
+			gpios = <&gpio1 2 0>;
+		};				
+
+		lan4 {
+			/* EPHY_LED4_N */
+			label = "rcu890:orange:lan";
+			gpios = <&gpio1 4 0>;
+		};								
+	};	
+
+	/* EPHY_LED3_N ==> RCU_FACTORY_RESET */
+	gpio-keys-polled {
+		compatible = "gpio-keys-polled";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		poll-interval = <200>;
+		reset {
+			label = "reset";
+			gpios = <&gpio1 3 1>;
+			linux,code = <0x198>;
+		};
+	};
+};

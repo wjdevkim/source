@@ -208,6 +208,14 @@ get_status_led() {
 	rb750gr3)
 		status_led="$board:blue:pwr"
 		;;
+
+	rcu890l|\
+	rcu890lhv2|\
+	rcu890lhv3|\
+	rcu890ls)
+		status_led="rcu890:green:status"
+		;;
+
 	sap-g3200u3)
 		status_led="$board:green:usb"
 		;;

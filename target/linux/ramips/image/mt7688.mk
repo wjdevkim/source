@@ -50,3 +50,27 @@ define Device/omega2p
   DEVICE_PACKAGES:= kmod-usb2 kmod-usb-ohci uboot-envtools kmod-sdhci-mt7620
 endef
 TARGET_DEVICES += omega2p
+
+define Device/rcu890lhv2
+  DTS := RCU890LHV2
+  IMAGE_SIZE := $(ralink_default_fw_size_32M)
+  DEVICE_TITLE := RCU890LHV2
+  DEVICE_PACKAGES:= kmod-usb2 kmod-usb-ohci uboot-envtools
+endef
+TARGET_DEVICES += rcu890lhv2
+
+define Device/rcu890lhv3
+  DTS := RCU890LHV3
+  IMAGE_SIZE := $(ralink_default_fw_size_32M)
+  DEVICE_TITLE := RCU890LHV3
+  DEVICE_PACKAGES:= kmod-usb2 kmod-usb-ohci uboot-envtools
+endef
+TARGET_DEVICES += rcu890lhv3
+
+define Device/rcu890ls
+  DTS := RCU890LS
+  IMAGE_SIZE := $(ralink_default_fw_size_32M)
+  DEVICE_TITLE := RCU890LS
+  DEVICE_PACKAGES:= kmod-usb2 kmod-usb-ohci uboot-envtools
+endef
+TARGET_DEVICES += rcu890ls

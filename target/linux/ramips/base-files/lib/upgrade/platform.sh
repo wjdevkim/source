@@ -113,6 +113,10 @@ platform_check_image() {
 	psr-680w|\
 	px-4885|\
 	rb750gr3|\
+	rcu890l|\
+	rcu890lhv2|\	
+	rcu890lhv3|\
+	rcu890ls|\
 	re6500|\
 	rp-n53|\
 	rt5350f-olinuxino|\

@@ -248,6 +248,17 @@ ramips_setup_interfaces()
 		ucidef_add_switch "switch0" \
 			"0:lan:1" "1:lan:2" "2:lan:3" "3:lan:4" "6@eth0"
 		;;
+
+	rcu890l|\
+	rcu890lhv2|\
+	rcu890lhv3|\
+	rcu890ls)
+		ucidef_set_interface_lan "eth0.1"		
+		ucidef_set_interface_wan "usb0"
+		ucidef_add_switch "switch0" \
+			"0:lan" "6t@eth0"
+		;;
+
 	rt-n56u)
 		ucidef_add_switch "switch0" \
 			"0:lan" "1:lan" "2:lan" "3:lan" "4:wan" "8@eth0"
@@ -394,6 +405,14 @@ ramips_setup_macs()
 		lan_mac=$(mtd_get_mac_binary factory 40)
 		wan_mac=$(mtd_get_mac_binary factory 46)
 		;;
+
+	rcu890lhv2|\
+	rcu890lhv3|\
+	rcu890ls)
+		wan_mac=$(mtd_get_mac_binary factory 4)
+		lan_mac=$(mtd_get_mac_binary factory 46)
+		;;
+
 	rt-n56u)
 		lan_mac=$(cat /sys/class/net/eth0/address)
 		lan_mac=$(macaddr_setbit_la "$lan_mac")

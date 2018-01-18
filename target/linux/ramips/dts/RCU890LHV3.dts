@@ -1,0 +1,293 @@
+/dts-v1/;
+
+/include/ "mt7628an.dtsi"
+
+/ {
+	compatible = "mediatek", "mediatek,mt7628an-soc";
+	model = "RCU890LHV3";
+
+	chosen {
+		bootargs = "console=ttyS0,115200";
+	};
+
+	memory@0 {
+		device_type = "memory";
+		reg = <0x0 0x8000000>;
+	};
+
+	pinctrl {
+		state_default: pinctrl0 {
+			gpio {
+				ralink,group = "gpio","perst","refclk","i2s","spis","wled_an","wdt","pwm0","pwm1";
+				ralink,function = "gpio";
+			};
+
+		};
+	};
+
+	palmbus@10000000 {
+		spi@b00 {
+			status = "okay";
+
+			pinctrl-names = "default";
+			pinctrl-0 = <&spi_pins>, <&spi_cs1_pins>;
+
+			m25p80@0 {
+				#address-cells = <1>;
+				#size-cells = <1>;
+				compatible = "mx25l25635e";
+				reg = <0 0>;
+				linux,modalias = "m25p80", "mx25l25635e";
+				spi-max-frequency = <40000000>;
+				m25p,chunked-io = <31>;
+
+				partition@0 {
+					label = "u-boot";
+					reg = <0x0 0x30000>;
+					read-only;
+				};
+
+				partition@30000 {
+					label = "u-boot-env";
+					reg = <0x30000 0x10000>;
+				};
+
+				factory: partition@40000 {
+					label = "factory";
+					reg = <0x40000 0x10000>;
+					read-only;
+				};
+
+				partition@50000 {
+					label = "firmware";
+					reg = <0x50000 0x1fb0000>;
+				};
+			};
+
+			spidev@1 {
+				#address-cells = <1>;
+				#size-cells = <1>;
+				compatible = "spidev";
+				reg = <1 0>;
+				spi-max-frequency = <40000000>;
+			};
+		};
+
+		i2c@900 {
+			status = "okay";
+		};
+
+		uart1@d00 {
+			status = "okay";
+		};
+
+		uart2@e00 {
+			status = "okay";
+		};
+
+		pwm@5000 {
+			status = "okay";
+		};
+	};
+
+	ethernet@10100000 {
+		mtd-mac-address = <&factory 0x28>;
+	};
+
+	sdhci@10130000 {
+		status = "okay";
+		mediatek,cd-high;
+//		mediatek,cd-poll;
+	};
+
+	bootstrap {
+		compatible = "mediatek,rcu890lhv2";
+
+		status = "okay";
+	};
+
+	gpio-export {
+		compatible = "gpio-export";
+		#size-cells = <0>;
+
+		/* MDI_TN_P4[GPIO#29] => LTE_RESET */
+		gpio29 {
+			gpio-export,name = "gpio29";
+			gpio-export,output = <0>;
+			gpios = <&gpio0 29 0>;
+		};
+
+		/* MDI_TP_P4[GPIO#28] => CL */
+		gpio28 {
+			gpio-export,name = "gpio28";
+			gpio-export,direction_may_change = <1>;
+			gpios = <&gpio0 28 0>;
+		};
+
+		/* MDI_RP_P4[GPIO#26] => RCU_GPIO_3 */
+		gpio26 {
+			gpio-export,name = "gpio26";
+			gpio-export,direction_may_change = <1>;
+			gpios = <&gpio0 26 0>;
+		};
+
+		/* MDI_RP_P3[GPIO#24] => RCU_GPIO_2 */
+		gpio24 {
+			gpio-export,name = "gpio24";
+			gpio-export,direction_may_change = <1>;
+			gpios = <&gpio0 24 0>;
+		};
+
+		/* MDI_TN_P3[GPIO#23] => RCU_GPIO_1 */
+		gpio23 {
+			gpio-export,name = "gpio23";
+			gpio-export,direction_may_change = <1>;
+			gpios = <&gpio0 23 0>;		
+		};
+
+
+		/* MDI_TP_P3[GPIO#22] => RCU_GPIO_0 */
+		gpio22 {
+			gpio-export,name = "gpio22";
+			gpio-export,direction_may_change = <1>;
+			gpios = <&gpio0 22 0>;
+		};		
+
+		/* MDI_RN_P1[GPIO#17] => RCU_LED_GREEN_1_SERIAL_RX_TX */
+		gpio17 {
+			/* for rcu890d compability */
+			gpio-export,name = "gpio17";
+			gpio-export,output = <0>;
+			gpios = <&gpio0 17 0>;
+		};		
+
+		/* MDI_RN_P1[GPIO#16] => RCU_LED_RED */
+		gpio16 {
+			/* for rcu890d compability */
+			gpio-export,name = "gpio16";
+			gpio-export,output = <0>;
+			gpios = <&gpio0 16 0>;
+		};		
+
+		/* EPHY_LED1[GPIO#42] => RCU_DCD */
+		gpio42 {
+			/* for rcu890d compability */
+			gpio-export,name = "gpio42";
+			gpio-export,output = <0>;
+			gpios = <&gpio1 10 0>;
+		};				
+
+		/* EPHY_LED0[GPIO#43] => RCU_DSR */
+		gpio43 {
+			/* for rcu890d compability */
+			gpio-export,name = "gpio43";
+			gpio-export,output = <0>;
+			gpios = <&gpio1 11 0>;
+		};	
+
+		/* I2S_SDI[GPIO#0] => RCU_RTS */
+		gpio0 {
+			/* for rcu890d compability */
+			gpio-export,name = "gpio0";
+			gpio-export,direction_may_change = <1>;
+			gpios = <&gpio0 0 0>;
+		};	
+
+		/* I2S_SDO[GPIO#1] => RCU_CTS */
+		gpio1 {
+			/* for rcu890d compability */
+			gpio-export,name = "gpio1";
+			gpio-export,output = <0>;
+			gpios = <&gpio0 1 0>;
+		};	
+
+		/* I2S_WS[GPIO#2] => RCU_DTR */
+		gpio2 {
+			/* for rcu890d compability */
+			gpio-export,name = "gpio2";
+			gpio-export,direction_may_change = <1>;
+			gpios = <&gpio0 2 0>;
+		};	
+
+		/* I2S_CLK[GPIO#3] => RCU_RI */
+		gpio3 {
+			/* for rcu890d compability */
+			gpio-export,name = "gpio3";
+			gpio-export,output = <0>;
+			gpios = <&gpio0 3 0>;
+		};
+
+
+
+		/* REF_CLK0[GPIO#37] => HW_VERSION */
+		gpio37 {
+			/* for rcu890d compability */
+			gpio-export,name = "gpio37";
+			gpio-export,output = <0>;
+			gpios = <&gpio1 5 0>;
+		};
+	
+		/* EPHY_LED4[GPIO#39] => VERSION_BIT_0 */
+		gpio39 {
+			/* for rcu890d compability */
+			gpio-export,name = "gpio39";
+			gpio-export,direction_may_change = <1>;
+			gpios = <&gpio1 7 0>;
+		};
+
+		/* EPHY_LED3[GPIO#40] => VERSION_BIT_1 */
+		gpio40 {
+			/* for rcu890d compability */
+			gpio-export,name = "gpio40";
+			gpio-export,direction_may_change = <1>;
+			gpios = <&gpio1 8 0>;
+		};
+
+		/* EPHY_LED2[GPIO#41] => VERSION_BIT_2 */
+		gpio41 {
+			/* for rcu890d compability */
+			gpio-export,name = "gpio41";
+			gpio-export,direction_may_change = <1>;
+			gpios = <&gpio1 9 0>;
+		};
+
+	};
+
+	gpio-leds {
+		compatible = "gpio-leds";
+
+		wan {
+			/* MDI_TN_P1[GPIO#15] -> LED_WAN*/
+			label = "rcu890:green:wan";
+			gpios = <&gpio0 15 1>;
+			default-state = "off";
+		};
+
+		lan {
+			/* MDI_TP_P1[GPIO#14] -> LED_LAN*/
+			label = "rcu890:orange:lan";
+			gpios = <&gpio0 14 1>;
+			default-state = "off";
+		};
+
+		status {
+			/* WLED_N[GPIO#44] */
+			label = "rcu890:green:status";
+			gpios = <&gpio1 12 1>;
+			default-state = "on";
+		};				
+
+		
+	};
+
+	/* WDT_RST_N[GPIO#38] ==> FACTORY_RESET */
+	gpio-keys-polled {
+		compatible = "gpio-keys-polled";
+		poll-interval = <200>;
+		reset {
+			label = "factory-reset";
+			gpios = <&gpio1 6 1>;
+			linux,code = <0x198>;
+		};
+	};
+};
